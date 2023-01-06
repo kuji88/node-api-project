@@ -3,7 +3,7 @@ const asyncHand = require("express-async-handler")
 const {valditUpdate, User} = require("../models/User")
 const router = express.Router();
 const bcrypt = require("bcryptjs")
-const jwt = require("jsonwebtoken")
+const {tokenVandcheck} = require("../middlewares/TokenVerfiy")
 
 
 /**
@@ -13,7 +13,10 @@ const jwt = require("jsonwebtoken")
  * @access private
  */
 
-router.put("/:id",asyncHand (async(req,res)=>{
+
+
+router.put("/:id", tokenVandcheck ,asyncHand (async(req,res)=>{
+
     const {error}= valditUpdate(req.body)
     if(error){
         return res.status(404).json({message: error.details[0].message})
@@ -36,6 +39,61 @@ router.put("/:id",asyncHand (async(req,res)=>{
     res.status(200).json(user)
 
 }))
+
+
+/**
+ * @desc Get All Users
+ * @route /api/user
+ * @method GET
+ * @access public
+ */
+
+router.get("/",  asyncHand (async(req,res)=>{
+    
+    const user = await User.find().select("-Password")
+
+    res.status(200).json(user)
+
+}))
+
+
+/**
+ * @desc Get User by Id
+ * @route /api/user:id
+ * @method GET
+ * @access public
+ */
+
+
+router.get("/:id", asyncHand(async(req,res)=>{
+    
+    const user = await User.findById(req.params.id).select("-Password");
+    if(user){
+    res.status(200).json(user)}
+    else{
+        res.status(200).json({message:"User not found"})}
+    }
+))
+
+/** 
+* @desc Delete User
+* @route /api/user/:id
+* @method Delete
+* @access public
+*/
+
+
+router.delete("/:id", asyncHand(async(req,res)=>{
+
+   const user = await User.findByIdAndDelete(req.params.id)
+
+   if(user){
+    res.status(200).json({message:"User has Deleted"})}
+    else{
+        res.status(200).json({message:"User not found"})}
+    }
+))
+
 
 
 module.exports = router;
