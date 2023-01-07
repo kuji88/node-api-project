@@ -45,6 +45,7 @@ const valditRegister =(obj)=>{
     return schema.validate(obj)
 }
 
+
 // Login validate
 const valditLogin =(obj)=>{
     const schema = joi.object({
