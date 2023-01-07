@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const joi = require("joi");
-const { boolean, bool } = require("joi");
 
 // User schema
 const userSchema = mongoose.Schema({
