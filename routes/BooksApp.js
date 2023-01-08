@@ -2,6 +2,8 @@ const express = require("express");
 const Joi = require('joi');
 const { default: mongoose } = require("mongoose");
 const {Books, valditCreateBooks, valditUpdateBooks} = require("../models/Books")
+const asyncHand = require("express-async-handler")
+
 
 const router = express.Router();
 
@@ -13,17 +15,23 @@ const router = express.Router();
  * @method Get
  * @access public
  */
-router.get("/",async(req,res)=>{
+router.get("/",asyncHand(async(req,res)=>{
     
-    try{
-    const books = await Books.find();
-    res.status(200).json(books)
-}
-catch(error){
-    console.log(error,"There's error")
-}
+    const {minRate, maxRate}= req.query
+    let books;
 
-})
+    if(minRate && maxRate){
+        books = await Books.find({rating: {$gte: minRate, $lte : maxRate}});
+    }
+    else{
+        books = await Books.find();
+    }
+
+
+
+    res.status(200).json(books)
+
+}))
 
 
 
