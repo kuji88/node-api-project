@@ -4,7 +4,8 @@ const auth = require("./routes/Auth")
 const users = require("./routes/Users")
 const {dbConnection} = require("./config/db")
 require("dotenv").config()
-
+const helmet = require("helmet")
+const cors = require("cors")
 
 // mongodb coonection
 dbConnection()
@@ -12,6 +13,12 @@ dbConnection()
 const app = express();
 
 app.use(express.json())
+
+// use Helmet
+app.use(helmet());
+
+//Use Cors
+app.use(cors())
 
 //routes
 app.use("/api/books",bookPath)
